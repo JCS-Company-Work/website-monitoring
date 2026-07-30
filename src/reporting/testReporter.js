@@ -2,6 +2,9 @@
  * Custom Playwright reporter.
  * Converts Playwright test results into our standard result format.
  */
+
+const { saveResult } = require('../db/resultRepository');
+
 class TestReporter {
 
   constructor() {
@@ -26,13 +29,16 @@ class TestReporter {
     };
 
     this.results.push(output);
+
+    // Save the result to the database
+    saveResult(output);
   }
 
   /**
    * Runs when the full Playwright test suite completes.
    */
   onEnd() {
-
+  console.log('CUSTOM REPORTER FIRED');
     console.log(this.results);
 
   }
