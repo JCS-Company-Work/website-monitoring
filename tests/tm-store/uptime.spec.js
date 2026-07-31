@@ -1,8 +1,8 @@
 const { test, expect } = require('@playwright/test');
 
-test('uptime test', async ({ page }) => {
+test('tm-checkout-flow', async ({ page }) => {
 
-    await page.goto('https://store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');
+    await page.goto('https://staging.store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');
 
     // Accept cookies if the button is present
     const acceptCookiesButton = page.locator('#btn-accept-all');
@@ -16,7 +16,7 @@ test('uptime test', async ({ page }) => {
     await expect(countLocator).toBeVisible();
     await expect(countLocator).toHaveText('1');
 
-    await page.goto('https://store.tailormade.uk/checkout');
+    await page.goto('https://staging.store.tailormade.uk/checkout');
 
     // Check that the form with name 'checkout' is visible
     await expect(page.locator('form[name="checkout"]')).toBeVisible();

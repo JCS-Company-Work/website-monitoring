@@ -61,7 +61,7 @@ const seed = db.transaction(() => {
     insertTest.run(
         siteId,
         coreCategoryId,
-        'Homepage loads',
+        'tm-checkout-flow',
         'uptime',
         '*/15 * * * *'
     );
