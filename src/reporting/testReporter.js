@@ -3,6 +3,9 @@
  * Converts Playwright test results into our standard result format.
  */
 
+// Pull in ANSI stripping utility to clean up error messages
+const { stripAnsi } = require('../utils/formatters');
+
 // Pull in results queries to save results to the database
 const { saveResult } = require('../db/queries/results');
 
@@ -11,6 +14,9 @@ const { createExecution, completeExecution } = require('../db/queries/executions
 
 // Pull in test queries to find tests by name
 const { findByName } = require('../db/queries/tests');
+
+// Pull in failure queries to save failures to the database
+const { createFailure } = require('../db/queries/failures');
 
 class TestReporter {
 
@@ -50,7 +56,7 @@ class TestReporter {
 
       return;
 
-  }
+    }
 
     const output = {
       executionId: this.executionId,
@@ -58,13 +64,24 @@ class TestReporter {
       status: result.status,
       duration: result.duration,
       startedAt: result.startTime,
-      error: result.error?.message ?? null
+      error: stripAnsi(result.error?.message ?? null)
     };
 
     this.results.push(output);
 
-    // Save the result to the database
-    saveResult(output);
+    // Get the ID of the newly created test result
+    const resultId = saveResult(output);
+
+    // If the test failed, create a failure record
+    if (result.status === 'failed') {
+
+      createFailure({
+          testResultId: resultId,
+          errorMessage: output.error,
+          stackTrace: stripAnsi(result.error?.stack ?? null)
+      });
+
+    }
   }
 
   /**
