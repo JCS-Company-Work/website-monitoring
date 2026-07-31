@@ -3,7 +3,7 @@
  * Converts Playwright test results into our standard result format.
  */
 
-const { saveResult } = require('../db/resultRepository');
+const { saveResult } = require('../db/queries/results');
 
 class TestReporter {
 
