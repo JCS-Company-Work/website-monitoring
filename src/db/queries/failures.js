@@ -18,8 +18,6 @@ const db = require('../database');
  */
 function createFailure(failure) {
 
-    console.log('createFailure input:', failure);
-
     const result = db.prepare(`
         INSERT INTO failures (
             test_result_id,
@@ -32,8 +30,6 @@ function createFailure(failure) {
         failure.errorMessage,
         failure.stackTrace ?? null
     );
-
-    console.log('Created failure ID:', result.lastInsertRowid);
 
 }
 

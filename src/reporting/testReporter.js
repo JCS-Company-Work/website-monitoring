@@ -83,37 +83,25 @@ class TestReporter {
     // If the test failed, create a failure record
     if (result.status === 'failed') {
 
-    try {
+      // If failure instance exists, update it, do not create a new one
+      const existingFailure = findOpenFailure(testRecord.id);
 
-        const existingFailure = findOpenFailure(testRecord.id);
+      if (existingFailure) {
 
-        console.log('Existing failure:', existingFailure);
+          updateFailure(existingFailure.id);
 
-        if (existingFailure) {
+      } else {
 
-            updateFailure(existingFailure.id);
+          // Create a new failure record
+          createFailure({
+              testResultId: resultId,
+              errorMessage: output.error,
+              stackTrace: stripAnsi(result.error?.stack)
+          });
 
-        } else {
-
-            console.log('Creating new failure');
-
-            createFailure({
-                testResultId: resultId,
-                errorMessage: output.error,
-                stackTrace: stripAnsi(result.error?.stack)
-            });
-
-            console.log('Failure created');
-
-        }
-
-    } catch (error) {
-
-        console.error('Failure handling failed:', error);
+      }
 
     }
-
-}
 
     // Handle passing tests
     if (result.status === 'passed') {
@@ -132,8 +120,7 @@ class TestReporter {
    * Runs when the full Playwright test suite completes.
    */
   onEnd() {
-    console.log('CUSTOM REPORTER FIRED');
-    console.log(this.results);
+    
     if (this.executionId !== null) {
         completeExecution(this.executionId);
     }
