@@ -1,8 +1,8 @@
-const db = require('./database');
-
 /**
  * Seeds the monitoring database with development data.
  */
+
+const db = require('./database');
 
 const insertBrand = db.prepare(`
     INSERT INTO brands (name, slug)
@@ -38,6 +38,7 @@ const seed = db.transaction(() => {
         'tailor-made'
     ).lastInsertRowid;
 
+
     // Site
     const siteId = insertSite.run(
         brandId,
@@ -46,35 +47,30 @@ const seed = db.transaction(() => {
         'live'
     ).lastInsertRowid;
 
-    // Suites
+
+    // Categories
     const coreCategoryId = insertCategory.run(
         'Core',
-        'Core functionality'
+        'Core website functionality'
     ).lastInsertRowid;
 
     const ecommerceCategoryId = insertCategory.run(
         'Ecommerce',
-        'Customer journeys'
+        'Customer shopping journeys'
     ).lastInsertRowid;
+
 
     // Tests
     insertTest.run(
         siteId,
-        coreCategoryId,
-        'tm-checkout-flow',
-        'uptime',
-        '*/15 * * * *'
-    );
-
-    insertTest.run(
-        siteId,
         ecommerceCategoryId,
-        'Add product to basket',
-        'basket',
+        'tm-checkout-flow',
+        'checkout',
         '*/15 * * * *'
     );
 
 });
+
 
 seed();
 
