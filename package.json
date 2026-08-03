@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test"
+    "test": "node src/run.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",
