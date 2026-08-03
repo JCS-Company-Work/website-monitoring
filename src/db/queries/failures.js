@@ -18,17 +18,22 @@ const db = require('../database');
  */
 function createFailure(failure) {
 
-    const result = db.prepare(`
-        INSERT INTO failures (
-            test_result_id,
-            error_message,
-            stack_trace
-        )
-        VALUES (?, ?, ?)
+    db.prepare(`
+    INSERT INTO failures (
+        test_result_id,
+        error_message,
+        stack_trace,
+        screenshot,
+        video,
+        last_seen
+    )
+    VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `).run(
         failure.testResultId,
         failure.errorMessage,
-        failure.stackTrace ?? null
+        failure.stackTrace ?? null,
+        failure.screenshot ?? null,
+        failure.video ?? null
     );
 
 }

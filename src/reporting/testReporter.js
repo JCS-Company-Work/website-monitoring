@@ -23,6 +23,9 @@ const {
     resolveFailure
 } = require('../db/queries/failures');
 
+// Pull in path module to handle file paths
+const path = require('path');
+
 class TestReporter {
 
   constructor() {
@@ -50,8 +53,16 @@ class TestReporter {
   onTestEnd(test, result) {
 
     // Find the test record in the database by its name
-    const testRecord = findByName(test.title);
+    const relativeFile = path.relative(
+        process.cwd(),
+        test.location.file
+    );
 
+    const testRecord = findByName(
+        test.title,
+        relativeFile
+    );
+    
     // If the test record doesn't exist, log an error and skip saving the result
     if (!testRecord) {
 
@@ -120,7 +131,7 @@ class TestReporter {
    * Runs when the full Playwright test suite completes.
    */
   onEnd() {
-    
+
     if (this.executionId !== null) {
         completeExecution(this.executionId);
     }

@@ -24,10 +24,11 @@ const insertTest = db.prepare(`
         site_id,
         category_id,
         name,
+        file,
         type,
         schedule
     )
-    VALUES (?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?)
 `);
 
 const seed = db.transaction(() => {
@@ -65,6 +66,7 @@ const seed = db.transaction(() => {
         siteId,
         ecommerceCategoryId,
         'tm-checkout-flow',
+        'tests/tm-store/uptime.spec.js',
         'checkout',
         '*/15 * * * *'
     );

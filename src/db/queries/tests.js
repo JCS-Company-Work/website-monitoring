@@ -9,13 +9,19 @@ const db = require('../database');
  * @param {string} name Test name
  * @returns {Object|undefined}
  */
-function findByName(name) {
-
+function findByName(name, file) {
+console.log(
+    'Searching for test by name:',
+    name,
+    'and file:',
+    file
+);
     return db.prepare(`
         SELECT *
         FROM tests
         WHERE name = ?
-    `).get(name);
+        AND file = ?
+    `).get(name, file);
 
 }
 

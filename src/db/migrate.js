@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS tests (
     site_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
     name TEXT NOT NULL,
+    file TEXT NOT NULL,
     type TEXT,
     enabled INTEGER DEFAULT 1,
     schedule TEXT,
