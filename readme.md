@@ -2,6 +2,8 @@
 
 A Node.js based website monitoring system using Playwright for automated checks, with SQLite for storing test definitions, executions, results, and failure incidents.
 
+Configuration can be received from external systems through an authenticated API and synced into the database.
+
 ## Current Status
 
 The project currently supports:
@@ -12,28 +14,41 @@ The project currently supports:
 * Tracking failures as incidents
 * Grouping repeated failures into a single incident
 * Resolving failures when tests recover
+* Receiving monitoring configuration through an authenticated API
+* Syncing sites, categories, and tests from external configuration
 
 ---
 
 ## Architecture Overview
 
-```
+
 Playwright Tests
-        |
-        ↓
+|
+↓
 Custom Reporter
-        |
-        ↓
+|
+↓
 SQLite Database
-        |
-        ├── Test Definitions
-        |
-        ├── Test Executions
-        |
-        ├── Test Results
-        |
-        └── Failure Incidents
-```
+|
+├── Test Definitions
+|
+├── Test Executions
+|
+├── Test Results
+|
+└── Failure Incidents
+
+External Configuration
+|
+↓
+Monitoring API
+|
+↓
+Configuration Sync
+|
+↓
+SQLite Database
+
 
 ---
 
@@ -45,9 +60,9 @@ Stores monitored brands.
 
 Example:
 
-```
+
 Tailor Made
-```
+
 
 Fields:
 
@@ -64,20 +79,23 @@ Stores websites belonging to brands.
 
 Example:
 
-```
+
 TM Store
 https://store.tailormade.uk
-```
+
 
 Fields:
 
 * `id`
 * `brand_id`
 * `name`
+* `slug`
 * `url`
 * `environment`
 * `active`
 * `created_at`
+
+The `slug` field provides a stable identifier for external configuration syncing.
 
 ---
 
@@ -94,7 +112,10 @@ Fields:
 
 * `id`
 * `name`
+* `slug`
 * `description`
+
+The `slug` field provides a stable identifier for external configuration syncing.
 
 ---
 
@@ -104,9 +125,9 @@ Stores registered monitoring tests.
 
 Example:
 
-```
+
 tm-checkout-flow
-```
+
 
 Fields:
 
@@ -114,6 +135,7 @@ Fields:
 * `site_id`
 * `category_id`
 * `name`
+* `slug`
 * `file`
 * `type`
 * `enabled`
@@ -124,9 +146,11 @@ The `file` field maps a database test to its Playwright spec file.
 
 Example:
 
-```
+
 tests/tm-store/uptime.spec.js
-```
+
+
+The `slug` field provides a stable identifier for external configuration syncing.
 
 ---
 
@@ -157,12 +181,12 @@ Each execution creates a result.
 
 Example:
 
-```
+
 Execution 1
-    |
-    └── tm-checkout-flow
-            failed
-```
+|
+└── tm-checkout-flow
+failed
+
 
 Fields:
 
@@ -196,7 +220,7 @@ Repeated failures are grouped together.
 
 Example:
 
-```
+
 Checkout flow failing
 
 Started:
@@ -207,7 +231,7 @@ Occurrences:
 
 Resolved:
 NULL
-```
+
 
 Fields:
 
@@ -224,28 +248,65 @@ Fields:
 
 ---
 
+# Configuration API
+
+The monitoring service exposes an authenticated API endpoint for receiving monitoring configuration.
+
+Endpoint:
+
+
+POST /api/config
+
+
+Requests are authenticated using an API key.
+
+The configuration sync process currently supports:
+
+* Sites
+* Categories
+* Tests
+
+The intended flow is:
+
+
+WordPress
+|
+↓
+Monitoring API
+|
+↓
+Configuration Sync
+|
+↓
+SQLite Database
+
+
+WordPress will become the source of truth for monitoring configuration, including test definitions and schedules.
+
+---
+
 # Failure Lifecycle
 
 ## New Failure
 
 A failed test with no existing open incident creates a failure:
 
-```
+
 test_results
-      |
-      ↓
+|
+↓
 failures
-```
+
 
 Example:
 
-```
+
 failures
 
 id: 1
 occurrences: 1
 resolved_at: NULL
-```
+
 
 ---
 
@@ -259,20 +320,19 @@ If the same test fails again:
 
 Example:
 
-```
+
 test_results
 
 1 failed
 2 failed
 3 failed
 
-
 failures
 
 id | occurrences
-----------------
-1  | 3
-```
+
+1 | 3
+
 
 ---
 
@@ -280,9 +340,9 @@ id | occurrences
 
 When the test passes:
 
-```
+
 resolved_at = current timestamp
-```
+
 
 The incident is closed.
 
@@ -298,50 +358,37 @@ Creates a new execution:
 
 ```javascript
 createExecution('manual')
-```
-
----
-
-## onTestEnd()
+onTestEnd()
 
 For every completed test:
 
-1. Find matching database test:
-
-```javascript
+Find matching database test:
 findByName(test.title, relativeFile)
-```
-
-2. Save result:
-
-```javascript
+Save result:
 saveResult()
-```
-
-3. Handle failures:
-
-* create new failure
-* update existing failure
-* resolve recovered failures
-
----
-
-## onEnd()
+Handle failures:
+create new failure
+update existing failure
+resolve recovered failures
+onEnd()
 
 Completes the execution:
 
-```javascript
 completeExecution()
-```
-
----
-
-# Project Structure
+Project Structure
 
 Current structure:
 
-```
 src
+├── api
+│   ├── middleware
+│   │   └── auth.js
+│   └── routes
+│       └── config.js
+│
+├── services
+│   └── configSync.js
+│
 ├── db
 │   ├── database.js
 │   ├── migrate.js
@@ -350,6 +397,8 @@ src
 │       ├── executions.js
 │       ├── failures.js
 │       ├── results.js
+│       ├── sites.js
+│       ├── categories.js
 │       └── tests.js
 │
 ├── reporting
@@ -361,87 +410,20 @@ src
 tests
 └── tm-store
     └── uptime.spec.js
-```
-
----
-
-# Running Locally
+Running Locally
 
 Install dependencies:
 
-```bash
 npm install
-```
 
-Create database:
+Reset development database:
 
-```bash
-npm run migrate
-```
-
-Seed development data:
-
-```bash
-node src/db/seed.js
-```
+npm run db:reset
 
 Run monitoring tests:
 
-```bash
 npm test
-```
 
----
+Start API:
 
-# Current Limitations / Next Steps
-
-## Scheduling
-
-Currently:
-
-* Tests are manually triggered
-
-Future:
-
-* Scheduler service
-* Cron based execution
-* Dynamic schedules from database
-
----
-
-## Test Runner Mapping
-
-Currently:
-
-* Tests are mapped by:
-
-  * test name
-  * spec file
-
-Future:
-
-* Additional metadata
-* Dynamic test discovery
-
----
-
-## Reporting Dashboard
-
-Future:
-
-* Uptime percentages
-* Failure history
-* Site health overview
-* Response time graphs
-* Screenshots/videos on failure
-
----
-
-## WordPress Integration
-
-Planned:
-
-* WordPress manages monitoring configuration
-* Node service executes tests
-* Results exposed via API
-* Dashboard displays monitoring status
+npm run server
