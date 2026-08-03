@@ -16,7 +16,12 @@ const { createExecution, completeExecution } = require('../db/queries/executions
 const { findByName } = require('../db/queries/tests');
 
 // Pull in failure queries to save failures to the database
-const { createFailure } = require('../db/queries/failures');
+const {
+    createFailure,
+    findOpenFailure,
+    updateFailure,
+    resolveFailure
+} = require('../db/queries/failures');
 
 class TestReporter {
 
@@ -72,16 +77,55 @@ class TestReporter {
     // Get the ID of the newly created test result
     const resultId = saveResult(output);
 
+    // Check for an existing unresolved failure for this test
+    const existingFailure = findOpenFailure(testRecord.id);
+
     // If the test failed, create a failure record
     if (result.status === 'failed') {
 
-      createFailure({
-          testResultId: resultId,
-          errorMessage: output.error,
-          stackTrace: stripAnsi(result.error?.stack ?? null)
-      });
+    try {
+
+        const existingFailure = findOpenFailure(testRecord.id);
+
+        console.log('Existing failure:', existingFailure);
+
+        if (existingFailure) {
+
+            updateFailure(existingFailure.id);
+
+        } else {
+
+            console.log('Creating new failure');
+
+            createFailure({
+                testResultId: resultId,
+                errorMessage: output.error,
+                stackTrace: stripAnsi(result.error?.stack)
+            });
+
+            console.log('Failure created');
+
+        }
+
+    } catch (error) {
+
+        console.error('Failure handling failed:', error);
 
     }
+
+}
+
+    // Handle passing tests
+    if (result.status === 'passed') {
+
+        if (existingFailure) {
+
+            resolveFailure(existingFailure.id);
+
+        }
+
+    }
+
   }
 
   /**

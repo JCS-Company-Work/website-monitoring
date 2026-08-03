@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS failures (
     video TEXT,
     occurrences INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_seen DATETIME,
     resolved_at DATETIME
 );
 
