@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS sites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     brand_id INTEGER,
     name TEXT NOT NULL,
+    slug TEXT UNIQUE,
     url TEXT NOT NULL,
     environment TEXT NOT NULL,
     active INTEGER DEFAULT 1,
@@ -26,7 +27,8 @@ CREATE TABLE IF NOT EXISTS sites (
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    description TEXT
+    description TEXT,
+    slug TEXT UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS tests (
@@ -34,8 +36,9 @@ CREATE TABLE IF NOT EXISTS tests (
     site_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
     name TEXT NOT NULL,
-    file TEXT NOT NULL,
+    slug TEXT UNIQUE,
     type TEXT,
+    file TEXT,
     enabled INTEGER DEFAULT 1,
     schedule TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP

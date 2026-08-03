@@ -1,21 +1,17 @@
 const db = require('../database');
 
 /**
- * Finds a monitoring test by name.
+ * Finds a monitoring test by name and file.
  *
  * Used by the Playwright reporter to map a Playwright test
  * to its database test record.
  *
  * @param {string} name Test name
+ * @param {string} file Test file path
  * @returns {Object|undefined}
  */
 function findByName(name, file) {
-console.log(
-    'Searching for test by name:',
-    name,
-    'and file:',
-    file
-);
+
     return db.prepare(`
         SELECT *
         FROM tests
@@ -25,6 +21,60 @@ console.log(
 
 }
 
+/**
+ * Finds a monitoring test by slug.
+ *
+ * Used by configuration sync from external systems.
+ *
+ * @param {string} slug Test identifier
+ * @returns {Object|undefined}
+ */
+function findBySlug(slug) {
+
+    return db.prepare(`
+        SELECT *
+        FROM tests
+        WHERE slug = ?
+    `).get(slug);
+
+}
+
+
+/**
+ * Creates a new monitoring test.
+ *
+ * @param {Object} test Test details
+ */
+function create(test) {
+
+    return db.prepare(`
+        INSERT INTO tests (
+            site_id,
+            category_id,
+            name,
+            slug,
+            type,
+            file,
+            schedule,
+            enabled
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+        test.siteId,
+        test.categoryId,
+        test.name,
+        test.slug,
+        test.type,
+        test.file,
+        test.schedule,
+        test.enabled ? 1 : 0
+    );
+
+}
+
+
 module.exports = {
-    findByName
+    findByName,
+    findBySlug,
+    create
 };

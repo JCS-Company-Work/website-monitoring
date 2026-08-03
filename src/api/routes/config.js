@@ -7,11 +7,29 @@ const router = express.Router();
 /**
  * Receives monitoring configuration from WordPress.
  */
-router.post('/', (req, res) => {
+const { syncConfig } = require('../../services/configSync');
 
-    console.log(req.body);
+// Define a POST route for syncing configuration
+router.post('/', async (req, res) => {
 
-    res.sendStatus(200);
+    try {
+
+        const result = await syncConfig(req.body);
+
+        res.status(200).json(result);
+
+    } catch (error) {
+
+        console.error(
+            'Config sync failed:',
+            error
+        );
+
+        res.status(500).json({
+            success: false
+        });
+
+    }
 
 });
 

@@ -10,13 +10,23 @@ const insertBrand = db.prepare(`
 `);
 
 const insertSite = db.prepare(`
-    INSERT INTO sites (brand_id, name, url, environment)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO sites (
+        brand_id,
+        name,
+        slug,
+        url,
+        environment
+    )
+    VALUES (?, ?, ?, ?, ?)
 `);
 
 const insertCategory = db.prepare(`
-    INSERT INTO categories (name, description)
-    VALUES (?, ?)
+    INSERT INTO categories (
+        name,
+        slug,
+        description
+    )
+    VALUES (?, ?, ?)
 `);
 
 const insertTest = db.prepare(`
@@ -44,6 +54,7 @@ const seed = db.transaction(() => {
     const siteId = insertSite.run(
         brandId,
         'TM Store',
+        'tm-store',
         'https://store.tailormade.uk',
         'live'
     ).lastInsertRowid;
@@ -52,11 +63,13 @@ const seed = db.transaction(() => {
     // Categories
     const coreCategoryId = insertCategory.run(
         'Core',
+        'core',
         'Core website functionality'
     ).lastInsertRowid;
 
     const ecommerceCategoryId = insertCategory.run(
         'Ecommerce',
+        'ecommerce',
         'Customer shopping journeys'
     ).lastInsertRowid;
 
