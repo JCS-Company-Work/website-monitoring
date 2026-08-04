@@ -22,6 +22,8 @@ const {
     create: createTest
 } = require('../db/queries/tests');
 
+// Utility for calculating the next run time of a test based on its schedule
+const { getNextRun } = require('../utils/schedule');
 
 async function syncConfig(config) {
 
@@ -74,6 +76,9 @@ async function syncConfig(config) {
         const existing = findTestBySlug(test.slug);
 
         if (!existing) {
+
+            // Calculate the next run time for the test based on its schedule
+            test.nextRunAt = getNextRun(test.schedule);
 
             createTest({
                 ...test,

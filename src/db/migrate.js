@@ -32,15 +32,26 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 CREATE TABLE IF NOT EXISTS tests (
+    -- Identity
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    site_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     slug TEXT UNIQUE,
-    type TEXT,
+
+    -- Relationships
+    site_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+
+    -- Test definition
+    test_runner TEXT,
     file TEXT,
+
+    -- Scheduling
     enabled INTEGER DEFAULT 1,
     schedule TEXT,
+    last_run_at DATETIME,
+    next_run_at DATETIME,
+
+    -- Audit
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

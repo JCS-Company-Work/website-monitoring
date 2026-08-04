@@ -72,7 +72,6 @@ function create(test) {
 
 }
 
-
 module.exports = {
     findByName,
     findBySlug,

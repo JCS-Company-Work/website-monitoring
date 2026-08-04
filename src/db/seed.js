@@ -31,14 +31,17 @@ const insertCategory = db.prepare(`
 
 const insertTest = db.prepare(`
     INSERT INTO tests (
+        name,
+        slug,
         site_id,
         category_id,
-        name,
+        test_runner,
         file,
-        type,
-        schedule
+        enabled,
+        schedule,
+        next_run_at
     )
-    VALUES (?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 const seed = db.transaction(() => {
@@ -76,12 +79,15 @@ const seed = db.transaction(() => {
 
     // Tests
     insertTest.run(
+        'TM Checkout Flow',
+        'tm-checkout-flow',
         siteId,
         ecommerceCategoryId,
-        'tm-checkout-flow',
+        'playwright',
         'tests/tm-store/uptime.spec.js',
-        'checkout',
-        '*/15 * * * *'
+        1,
+        '*/15 * * * *',
+        '2026-08-04T10:15:00.000Z'
     );
 
 });
