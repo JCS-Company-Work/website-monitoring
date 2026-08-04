@@ -19,7 +19,8 @@ const {
 
 const {
     findBySlug: findTestBySlug,
-    create: createTest
+    create: createTest,
+    updateTest: updateTest
 } = require('../db/queries/tests');
 
 // Utility for calculating the next run time of a test based on its schedule
@@ -73,18 +74,31 @@ async function syncConfig(config) {
     // Sync tests
     for (const test of config.tests ?? []) {
 
+        // Check if the test already exists in the database
         const existing = findTestBySlug(test.slug);
 
-        if (!existing) {
+        // Calculate the next run time for the test based on its schedule
+        test.nextRunAt = getNextRun(test.schedule);
 
-            // Calculate the next run time for the test based on its schedule
-            test.nextRunAt = getNextRun(test.schedule);
+        // If the test doesn't exist, create it; otherwise, update it
+        if (!existing) {
 
             createTest({
                 ...test,
                 siteId: sites[test.site],
                 categoryId: categories[test.category]
             });
+
+        } else {
+
+            updateTest(
+                existing.id,
+                {
+                    ...test,
+                    siteId: sites[test.site],
+                    categoryId: categories[test.category]
+                }
+            );
 
         }
 
