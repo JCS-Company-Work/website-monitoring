@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('tm-checkout-flow', async ({ page }) => {
-expect(true).toBe(false);
+
     await page.goto('https://store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');
 
     // Accept cookies if the button is present

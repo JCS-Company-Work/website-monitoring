@@ -30,7 +30,8 @@ function getDueTests() {
 async function checkTests() {
 
     const tests = getDueTests();
-
+console.log('Checking for due tests...');
+console.log('Due tests:', tests.map(test => test.slug));
     if (!tests.length) {
         return;
     }
@@ -47,18 +48,24 @@ async function checkTests() {
             test.slug
         );
 
-        // Run the test using the Playwright runner
-        await runTests(
-            test.file,
-            test.slug
-        );
+        try {
 
-        // Update the test's next run time in the database
-        updateSchedule(
-            test.id,
-            new Date().toISOString(),
-            getNextRun(test.schedule)
-        );
+            // Run the test using the Playwright runner
+            await runTests(
+                test.file,
+                test.slug
+            );
+
+        } finally {
+
+            // Update the test's next run time in the database
+            updateSchedule(
+                test.id,
+                new Date().toISOString(),
+                getNextRun(test.schedule)
+            );
+
+        }
 
     }
 
@@ -71,10 +78,12 @@ function startWorker() {
 
     console.log('Monitoring worker started');
 
+    // Check for due tests immediately on startup
+    checkDueTests();
+
+    // Check for due tests every minute
     setInterval(() => {
-
-        checkTests();
-
+        checkDueTests();
     }, 60000);
 
 }
