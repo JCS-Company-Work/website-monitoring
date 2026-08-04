@@ -30,8 +30,7 @@ function getDueTests() {
 async function checkTests() {
 
     const tests = getDueTests();
-console.log('Checking for due tests...');
-console.log('Due tests:', tests.map(test => test.slug));
+
     if (!tests.length) {
         return;
     }
@@ -56,12 +55,18 @@ console.log('Due tests:', tests.map(test => test.slug));
                 test.slug
             );
 
+        }  catch (error) {
+
+            console.error(error);
+
         } finally {
 
             // Update the test's next run time in the database
             updateSchedule(
                 test.id,
-                new Date().toISOString(),
+                new Date().toISOString()
+                .slice(0, 19)
+                .replace('T', ' '),
                 getNextRun(test.schedule)
             );
 
@@ -79,11 +84,11 @@ function startWorker() {
     console.log('Monitoring worker started');
 
     // Check for due tests immediately on startup
-    checkDueTests();
+    checkTests();
 
     // Check for due tests every minute
     setInterval(() => {
-        checkDueTests();
+        checkTests();
     }, 60000);
 
 }

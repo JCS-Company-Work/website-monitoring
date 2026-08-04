@@ -76,6 +76,16 @@ const seed = db.transaction(() => {
         'Customer shopping journeys'
     ).lastInsertRowid;
 
+    /**
+     * Get current timestamp in ISO format without milliseconds and timezone.
+     * @returns {string} Current timestamp in ISO format without milliseconds and timezone.
+     */
+    function now() {
+        return new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' ');
+    }
 
     // Tests
     insertTest.run(
@@ -86,8 +96,8 @@ const seed = db.transaction(() => {
         'playwright',
         'tests/tm-store/uptime.spec.js',
         1,
-        '*/15 * * * *',
-        '2026-08-04T10:15:00.000Z'
+        '*/1 * * * *',
+        now()
     );
 
 });

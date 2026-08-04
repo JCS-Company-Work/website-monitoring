@@ -10,7 +10,10 @@ function getNextRun(schedule) {
 
     const interval = CronExpressionParser.parse(schedule);
 
-    return interval.next().toISOString();
+    return interval.next()
+    .toISOString()
+    .slice(0, 19)
+    .replace('T', ' ');
 
 }
 
