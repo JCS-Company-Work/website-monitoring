@@ -375,6 +375,58 @@ onEnd()
 Completes the execution:
 
 completeExecution()
+
+# Worker Execution
+
+The monitoring worker checks for tests that are due to run based on their schedule.
+
+The current flow is:
+
+Worker
+|
+↓
+Find due tests
+|
+↓
+Run Playwright test
+|
+↓
+Custom Reporter
+|
+↓
+Store execution results
+
+
+The worker uses the existing Playwright runner and reporting flow.
+
+Scheduled tests are identified using their database configuration:
+
+* `enabled`
+* `schedule`
+* `next_run_at`
+
+
+---
+
+# Test Execution Flow
+
+A scheduled test execution follows this process:
+
+1. Worker checks for due tests:
+
+next_run_at <= current time
+
+Worker starts the existing Playwright runner.
+Playwright executes the test file defined in the database.
+
+Example:
+
+tests/tm-store/uptime.spec.js
+The reporter records:
+Execution
+Result
+Failure incident (if required)
+
 Project Structure
 
 Current structure:

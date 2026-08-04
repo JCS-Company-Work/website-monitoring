@@ -9,6 +9,7 @@
   "scripts": {
     "test": "node src/run.js",
     "server": "node src/server.js",
+    "worker:dev": "node src/worker/index.js",
     "db:migrate": "node src/db/migrate.js",
     "db:seed": "node src/db/seed.js",
     "db:reset": "rm -f data/monitoring.sqlite && npm run db:migrate && npm run db:seed"

@@ -12,8 +12,8 @@ const { saveResult } = require('../db/queries/results');
 // Pull in execution queries to create and complete executions
 const { createExecution, completeExecution } = require('../db/queries/executions');
 
-// Pull in test queries to find tests by name
-const { findByName } = require('../db/queries/tests');
+// Pull in test queries to find tests by slug
+const { findBySlug } = require('../db/queries/tests');
 
 // Pull in failure queries to save failures to the database
 const {
@@ -52,15 +52,8 @@ class TestReporter {
    */
   onTestEnd(test, result) {
 
-    // Find the test record in the database by its name
-    const relativeFile = path.relative(
-        process.cwd(),
-        test.location.file
-    );
-
-    const testRecord = findByName(
-        test.title,
-        relativeFile
+    const testRecord = findBySlug(
+        process.env.MONITORING_TEST_SLUG
     );
     
     // If the test record doesn't exist, log an error and skip saving the result

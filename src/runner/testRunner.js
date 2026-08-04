@@ -8,15 +8,28 @@ const { spawn } = require('child_process');
  *
  * @returns {Promise<void>}
  */
-function runTests() {
+function runTests(file = null, slug) {
 
     return new Promise((resolve, reject) => {
 
+        const args = [
+            'playwright',
+            'test'
+        ];
+
+        if (file) {
+            args.push(file);
+        }
+
         const child = spawn(
             'npx',
-            ['playwright', 'test'],
+            args,
             {
-                stdio: 'inherit'
+                stdio: 'inherit',
+                    env: {
+                    ...process.env,
+                    MONITORING_TEST_SLUG: slug
+                }
             }
         );
 

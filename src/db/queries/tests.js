@@ -72,8 +72,32 @@ function create(test) {
 
 }
 
+/**
+ * Updates the schedule of a monitoring test.
+ *
+ * @param {number} id Test ID
+ * @param {string} lastRunAt Last run timestamp
+ * @param {string} nextRunAt Next run timestamp
+ * @returns {Object}
+ */
+function updateSchedule(id, lastRunAt, nextRunAt) {
+
+    return db.prepare(`
+        UPDATE tests
+        SET last_run_at = ?,
+            next_run_at = ?
+        WHERE id = ?
+    `).run(
+        lastRunAt,
+        nextRunAt,
+        id
+    );
+
+}
+
 module.exports = {
     findByName,
     findBySlug,
-    create
+    create,
+    updateSchedule
 };

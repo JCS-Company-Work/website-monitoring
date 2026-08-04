@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS tests (
     enabled INTEGER DEFAULT 1,
     schedule TEXT,
     last_run_at DATETIME,
-    next_run_at DATETIME,
+    next_run_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     -- Audit
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
