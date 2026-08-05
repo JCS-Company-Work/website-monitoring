@@ -10,6 +10,9 @@ const express = require('express');
 // Import the config routes
 const configRoutes = require('./api/routes/config');
 
+// Import route to retrieve available tests
+const testsRoutes = require('./api/routes/tests');
+
 // Create an Express application
 const app = express();
 
@@ -20,7 +23,14 @@ app.use(express.json());
 app.use(
     '/api/config',
     authenticate,
-    configRoutes,
+    configRoutes
+);
+
+// Mount the tests routes at the /api/tests path
+app.use(
+    '/api/tests',
+    authenticate,
+    testsRoutes
 );
 
 // Start the server on the specified port

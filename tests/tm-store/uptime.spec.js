@@ -1,5 +1,13 @@
 const { test, expect } = require('@playwright/test');
 
+// Test metadata to pass to WP scheduler via the monitoring API
+test.monitoring = {
+    slug: 'tm-checkout-flow',
+    name: 'TM Checkout Flow',
+    description: 'Checks the customer checkout process',
+    type: 'playwright'
+};
+
 test('tm-checkout-flow', async ({ page }) => {
 
     await page.goto('https://store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');

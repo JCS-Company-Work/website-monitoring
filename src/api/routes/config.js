@@ -12,6 +12,8 @@ const { syncConfig } = require('../../services/configSync');
 // Define a POST route for syncing configuration
 router.post('/', async (req, res) => {
 
+        console.log('CONFIG POST HIT');
+
     try {
 
         const result = await syncConfig(req.body);
