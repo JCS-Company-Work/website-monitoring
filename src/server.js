@@ -13,6 +13,9 @@ const configRoutes = require('./api/routes/config');
 // Import route to retrieve available tests
 const testsRoutes = require('./api/routes/tests');
 
+// Import the worker start function
+const { startWorker } = require('./worker');
+
 // Create an Express application
 const app = express();
 
@@ -42,6 +45,9 @@ app.listen(PORT, () => {
     console.log(
         `Monitoring API listening on port ${PORT}`
     );
+
+    // Start the worker process
+    startWorker();
 
 });
 

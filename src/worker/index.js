@@ -1,3 +1,5 @@
 const { startWorker } = require('./worker');
 
-startWorker();
+module.exports = {
+    startWorker
+};
