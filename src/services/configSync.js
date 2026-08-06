@@ -8,109 +8,154 @@
  */
 
 const {
-    findBySlug: findSiteBySlug,
+    findByWpId: findSiteByWpId,
     create: createSite
 } = require('../db/queries/sites');
 
 const {
-    findBySlug: findCategoryBySlug,
+    findByWpId: findCategoryByWpId,
     create: createCategory
 } = require('../db/queries/categories');
 
 const {
-    findBySlug: findTestBySlug,
+    findByWpId: findTestByWpId,
     create: createTest,
-    updateTest: updateTest
+    updateTest
 } = require('../db/queries/tests');
 
-// Utility for calculating the next run time of a test based on its schedule
 const { getNextRun } = require('../utils/schedule');
+
 
 async function syncConfig(config) {
 
     const sites = {};
+
     const categories = {};
 
-    // Sync sites
-    for (const site of config.sites ?? []) {
 
-        let record = findSiteBySlug(site.slug);
-
-        if (!record) {
-
-            const result = createSite(site);
-
-            record = {
-                id: result.lastInsertRowid
-            };
-
-        }
-
-        sites[site.slug] = record.id;
-
-    }
-
-
-    // Sync categories
-    for (const category of config.categories ?? []) {
-
-        let record = findCategoryBySlug(category.slug);
-
-        if (!record) {
-
-            const result = createCategory(category);
-
-            record = {
-                id: result.lastInsertRowid
-            };
-
-        }
-
-        categories[category.slug] = record.id;
-
-    }
-
-
-    // Sync tests
+    // Sync tests and related data
     for (const test of config.tests ?? []) {
 
-        // Check if the test already exists in the database
-        const existing = findTestBySlug(test.slug);
 
-        // Calculate the next run time for the test based on its schedule
-        test.nextRunAt = getNextRun(test.schedule);
+        /*
+         * Sync site
+         */
+        let site = findSiteByWpId(
+            test.site.id
+        );
 
-        // If the test doesn't exist, create it; otherwise, update it
+
+        if (!site) {
+
+            const result = createSite({
+
+                wp_site_id: test.site.id,
+
+                slug: test.site.slug,
+
+                name: test.site.name,
+
+                url: test.site.url,
+
+            });
+
+
+            site = {
+                id: result.lastInsertRowid
+            };
+
+        }
+
+
+        sites[test.site.id] = site.id;
+
+
+
+        /*
+         * Sync category
+         */
+        let category = findCategoryByWpId(
+            test.category.id
+        );
+
+
+        if (!category) {
+
+            const result = createCategory({
+
+                wp_category_id: test.category.id,
+
+                slug: test.category.slug,
+
+                name: test.category.name,
+
+            });
+
+
+            category = {
+                id: result.lastInsertRowid
+            };
+
+        }
+
+
+        categories[test.category.id] = category.id;
+
+
+
+        /*
+         * Sync test
+         */
+        const existing = findTestByWpId(
+            test.id
+        );
+
+
+        const data = {
+
+            wp_test_id: test.id,
+
+            name: test.name,
+
+            slug: test.slug,
+
+            site_id: site.id,
+
+            category_id: category.id,
+
+            test_runner: test.runner,
+
+            schedule: test.schedule,
+
+            enabled: test.enabled ? 1 : 0,
+
+            next_run_at: getNextRun(
+                test.schedule
+            )
+
+        };
+
+
         if (!existing) {
 
-            createTest({
-                ...test,
-                siteId: sites[test.site],
-                categoryId: categories[test.category]
-            });
+            createTest(data);
 
         } else {
 
             updateTest(
                 existing.id,
-                {
-                    ...test,
-                    siteId: sites[test.site],
-                    categoryId: categories[test.category]
-                }
+                data
             );
 
         }
 
     }
 
-
     return {
         success: true
     };
 
 }
-
 
 module.exports = {
     syncConfig

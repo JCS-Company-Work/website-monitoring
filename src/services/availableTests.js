@@ -71,9 +71,9 @@ function scanDirectory(dir, tests) {
             ),
 
                 slug: 'tm-checkout-flow',
-    name: 'TM Checkout Flow',
-    description: 'Checks the customer checkout process',
-    type: 'playwright'
+                name: 'TM Checkout Flow',
+                description: 'Checks the customer checkout process',
+                type: 'playwright'
 
         });
 

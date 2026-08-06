@@ -1,4 +1,28 @@
+/**
+ * Queries for the "tests" table.
+ */
+
 const db = require('../database');
+
+
+/**
+ * Finds a monitoring test by WordPress ID.
+ *
+ * Used by configuration sync from WordPress.
+ *
+ * @param {number} wpTestId WordPress test ID
+ * @returns {Object|undefined}
+ */
+function findByWpId(wpTestId) {
+
+    return db.prepare(`
+        SELECT *
+        FROM tests
+        WHERE wp_test_id = ?
+    `).get(wpTestId);
+
+}
+
 
 /**
  * Finds a monitoring test by name and file.
@@ -21,10 +45,11 @@ function findByName(name, file) {
 
 }
 
+
 /**
  * Finds a monitoring test by slug.
  *
- * Used by configuration sync from external systems.
+ * Used for debugging/manual lookups.
  *
  * @param {string} slug Test identifier
  * @returns {Object|undefined}
@@ -49,6 +74,7 @@ function create(test) {
 
     return db.prepare(`
         INSERT INTO tests (
+            wp_test_id,
             site_id,
             category_id,
             name,
@@ -59,36 +85,39 @@ function create(test) {
             enabled,
             next_run_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
-        test.siteId,
-        test.categoryId,
+        test.wp_test_id,
+        test.site_id,
+        test.category_id,
         test.name,
         test.slug,
         test.test_runner,
-        test.file,
+        test.file ?? null,
         test.schedule,
         test.enabled ? 1 : 0,
-        test.nextRunAt
+        test.next_run_at
     );
 
 }
 
+
 /**
  * Updates an existing monitoring test.
  *
- * Used by configuration sync when a test already exists.
- * WordPress remains the source of truth for monitoring configuration.
+ * WordPress remains the source of truth
+ * for monitoring configuration.
  *
- * @param {number} id Test ID
+ * @param {number} id Node test ID
  * @param {Object} test Test details
- * @returns {Object} Result of the update operation
+ * @returns {Object}
  */
 function updateTest(id, test) {
 
     return db.prepare(`
         UPDATE tests
         SET
+            wp_test_id = ?,
             site_id = ?,
             category_id = ?,
             name = ?,
@@ -100,19 +129,21 @@ function updateTest(id, test) {
             next_run_at = ?
         WHERE id = ?
     `).run(
-        test.siteId,
-        test.categoryId,
+        test.wp_test_id,
+        test.site_id,
+        test.category_id,
         test.name,
         test.slug,
         test.test_runner,
-        test.file,
+        test.file ?? null,
         test.enabled ? 1 : 0,
         test.schedule,
-        test.nextRunAt,
+        test.next_run_at,
         id
     );
 
 }
+
 
 /**
  * Updates the schedule of a monitoring test.
@@ -140,7 +171,9 @@ function updateSchedule(id, lastRunAt, nextRunAt) {
 
 }
 
+
 module.exports = {
+    findByWpId,
     findByName,
     findBySlug,
     create,

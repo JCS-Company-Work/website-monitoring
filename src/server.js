@@ -21,14 +21,14 @@ app.use(express.json());
 
 // Mount the config routes at the /api/config path
 app.use(
-    '/api/config',
+    '/api/tests/sync',
     authenticate,
     configRoutes
 );
 
 // Mount the tests routes at the /api/tests path
 app.use(
-    '/api/tests',
+    '/api/tests/available',
     authenticate,
     testsRoutes
 );
