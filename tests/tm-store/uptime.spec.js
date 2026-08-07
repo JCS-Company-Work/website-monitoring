@@ -11,7 +11,7 @@ test.monitoring = {
 test('tm-checkout-flow', async ({ page }) => {
 
     await page.goto('https://store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');
-
+expect(true).toBe(false);
     // Accept cookies if the button is present
     const acceptCookiesButton = page.locator('#btn-accept-all');
     if (await acceptCookiesButton.isVisible()) {

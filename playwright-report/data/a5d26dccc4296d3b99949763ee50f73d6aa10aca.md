@@ -1,0 +1,653 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tm-store/uptime.spec.js >> tm-checkout-flow
+- Location: tests/tm-store/uptime.spec.js:11:1
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: false
+Received: true
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - search [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]: Search
+        - searchbox "Search" [ref=e9]
+    - link "Tailor-made Shop" [ref=e15] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e16]:
+      - list [ref=e17]:
+        - listitem [ref=e18]:
+          - link "Account Login" [ref=e19] [cursor=pointer]:
+            - /url: /my-account/
+            - text: Account
+      - link "ITEMS 0" [ref=e22] [cursor=pointer]:
+        - /url: https://store.tailormade.uk/basket/
+        - text: ITEMS
+        - generic [ref=e24]: "0"
+  - navigation [ref=e25]:
+    - list [ref=e28]:
+      - listitem [ref=e29]:
+        - link "Featured Products" [ref=e30] [cursor=pointer]:
+          - /url: https://store.tailormade.uk/product-category/furniture/tables/featured/
+      - listitem [ref=e31]:
+        - link "Collection" [ref=e32] [cursor=pointer]:
+          - /url: https://store.tailormade.uk/product-category/furniture/tables/
+        - list:
+          - listitem [ref=e33]:
+            - link "Phantom Collection" [ref=e34] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/product-category/furniture/phantom/
+            - list:
+              - listitem [ref=e35]:
+                - link "View All" [ref=e36] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/product-category/furniture/phantom/
+              - listitem [ref=e37]:
+                - link "Phantom Edge" [ref=e38] [cursor=pointer]:
+                  - /url: /product-category/furniture/phantom/?product_tag=metal
+              - listitem [ref=e39]:
+                - link "Phantom Slim" [ref=e40] [cursor=pointer]:
+                  - /url: /product-category/furniture/phantom/?product_tag=solid-12
+              - listitem [ref=e41]:
+                - link "Phantom Solid" [ref=e42] [cursor=pointer]:
+                  - /url: /product-category/furniture/phantom/?product_tag=solid-20
+          - listitem [ref=e43]:
+            - link "Vanguard Collection" [ref=e44] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/product-category/furniture/vanguard/
+            - list:
+              - listitem [ref=e45]:
+                - link "View All" [ref=e46] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/product-category/furniture/vanguard/
+              - listitem [ref=e47]:
+                - link "Vanguard Edge" [ref=e48] [cursor=pointer]:
+                  - /url: /product-category/furniture/vanguard/?product_tag=metal
+              - listitem [ref=e49]:
+                - link "Vanguard Slim" [ref=e50] [cursor=pointer]:
+                  - /url: /product-category/furniture/vanguard/?product_tag=solid-12
+              - listitem [ref=e51]:
+                - link "Vanguard Solid" [ref=e52] [cursor=pointer]:
+                  - /url: /product-category/furniture/vanguard/?product_tag=solid-20
+          - listitem [ref=e53]:
+            - link "Monarch Collection" [ref=e54] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/product-category/furniture/monarch/
+            - list:
+              - listitem [ref=e55]:
+                - link "View All" [ref=e56] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/product-category/furniture/monarch/
+              - listitem [ref=e57]:
+                - link "Monarch Edge" [ref=e58] [cursor=pointer]:
+                  - /url: /product-category/furniture/monarch/?product_tag=metal
+              - listitem [ref=e59]:
+                - link "Monarch Slim" [ref=e60] [cursor=pointer]:
+                  - /url: /product-category/furniture/monarch/?product_tag=solid-12
+              - listitem [ref=e61]:
+                - link "Monarch Solid" [ref=e62] [cursor=pointer]:
+                  - /url: /product-category/furniture/monarch/?product_tag=solid-20
+          - listitem [ref=e63]:
+            - link "Luna Collection" [ref=e64] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/product-category/furniture/luna/
+            - list:
+              - listitem [ref=e65]:
+                - link "View All" [ref=e66] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/product-category/furniture/luna/
+              - listitem [ref=e67]:
+                - link "Luna Edge" [ref=e68] [cursor=pointer]:
+                  - /url: /product-category/furniture/luna/?product_tag=metal
+              - listitem [ref=e69]:
+                - link "Luna Slim" [ref=e70] [cursor=pointer]:
+                  - /url: /product-category/furniture/luna/?product_tag=solid-12
+              - listitem [ref=e71]:
+                - link "Luna Solid" [ref=e72] [cursor=pointer]:
+                  - /url: /product-category/furniture/luna/?product_tag=solid-20
+          - text: "* All items manufactured with porcelain stoneware surfaces"
+      - listitem [ref=e73]:
+        - link "Info" [ref=e74] [cursor=pointer]:
+          - /url: https://store.tailormade.uk/support/
+        - list:
+          - listitem [ref=e75]:
+            - link "About the Company" [ref=e76] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/about-us/
+            - list:
+              - listitem [ref=e77]:
+                - link "About Us" [ref=e78] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/about-us/
+              - listitem [ref=e79]:
+                - link "FAQs" [ref=e80] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/frequently-asked-questions/
+              - listitem [ref=e81]:
+                - link "Support" [ref=e82] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/frequently-asked-questions/
+              - listitem [ref=e83]:
+                - link "Aftercare" [ref=e84] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/product-care/
+          - listitem [ref=e85]:
+            - link "Orders" [ref=e86] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/support/
+            - list:
+              - listitem [ref=e87]:
+                - link "Delivery Information" [ref=e88] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/delivery/
+              - listitem [ref=e89]:
+                - link "Returns Policy" [ref=e90] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/returns-policy/
+              - listitem [ref=e91]:
+                - link "Payment Options" [ref=e92] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/payment/
+              - listitem [ref=e93]:
+                - link "Warranty" [ref=e94] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/warranty/
+              - listitem [ref=e95]:
+                - link "Trade Enquiries" [ref=e96] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/about-us/trade-programme/
+          - listitem [ref=e97]:
+            - link "Contact" [ref=e98] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/support/contact-us/
+            - list:
+              - listitem [ref=e99]:
+                - link "Contact Us" [ref=e100] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/contact-us/
+              - listitem [ref=e101]:
+                - link "020 3848 5212" [ref=e102] [cursor=pointer]:
+                  - /url: tel:02038485212
+              - listitem [ref=e104]:
+                - link "WhatsApp" [ref=e105] [cursor=pointer]:
+                  - /url: https://wa.me/447782274315?text=Hi,%20I%20have%20a%20question%20about%20your%20dining%20tables
+              - listitem [ref=e107]:
+                - link "sales@tailormade.uk" [ref=e108] [cursor=pointer]:
+                  - /url: mailto:sales@tailormade.uk
+          - text: "* All items manufactured with porcelain stoneware surfaces"
+      - listitem [ref=e110]:
+        - link "Wishlist" [ref=e111] [cursor=pointer]:
+          - /url: /wishlist
+  - generic [ref=e112]:
+    - main [ref=e116]:
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - list [ref=e119]:
+            - listitem [ref=e120]:
+              - link [ref=e121] [cursor=pointer]:
+                - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-06.jpg
+                - img "Phantom Edge – Quad main gallery image" [ref=e122]
+            - listitem [ref=e123]:
+              - link [ref=e124] [cursor=pointer]:
+                - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-02.jpg
+                - img "Phantom Edge – Quad gallery thumbnail 1" [ref=e125]
+            - listitem [ref=e126]:
+              - link [ref=e127] [cursor=pointer]:
+                - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-01.jpg
+                - img "Phantom Edge – Quad gallery thumbnail 2" [ref=e128]
+            - listitem [ref=e129]:
+              - link [ref=e130] [cursor=pointer]:
+                - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-04.jpg
+                - img "Phantom Edge – Quad gallery thumbnail 3" [ref=e131]
+          - generic [ref=e132]:
+            - generic [ref=e133]: Phantom Collection
+            - heading "Phantom Edge - Quad" [level=3] [ref=e134]
+            - paragraph [ref=e135]: Rectangular dining table with metal veneer and twin hexagon base.
+            - paragraph [ref=e136]:
+              - text: From
+              - generic [ref=e137]: £6,000.00
+            - paragraph [ref=e139]: Made to order in 4-6 weeks.
+            - list [ref=e141]:
+              - listitem [ref=e142]: Luxury Dining Surfaces Crafted for Everyday Living
+              - listitem [ref=e144]: 20+ Curated Colours & Styles
+              - listitem [ref=e146]: Fully Customisable Design
+              - listitem [ref=e148]: Seats 10 - 12 People
+              - listitem [ref=e150]: Design Guidance Included
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - link "Create Your Table in 3D" [ref=e154] [cursor=pointer]:
+                  - /url: "#3d-model"
+                - paragraph [ref=e155]: Explore colour combinations in real time
+              - generic [ref=e156]:
+                - link "Talk to a Table Specialist" [ref=e157] [cursor=pointer]:
+                  - /url: "#"
+                - generic [ref=e158]:
+                  - paragraph [ref=e159]: Get guidance on size, colour and layout
+                  - img "Whatsapp logo" [ref=e160]
+          - link "Chat with us on WhatsApp" [ref=e162] [cursor=pointer]:
+            - /url: "#"
+            - text: WhatsApp
+        - generic [ref=e164]:
+          - heading "Work With a Personal Table Specialist" [level=3] [ref=e165]
+          - paragraph [ref=e166]: Not sure which size, finish, or combination will work best? Our team can guide you through the process and help you refine your design.
+          - link "Talk To A Table Specialist" [ref=e168] [cursor=pointer]:
+            - /url: "#"
+          - generic [ref=e169]:
+            - paragraph [ref=e170]: Send us a photo of your space.
+            - img "Whatsapp logo" [ref=e171]
+        - generic [ref=e172]:
+          - separator [ref=e173]
+          - blockquote [ref=e174]:
+            - paragraph [ref=e175]: "\"Exceptional delivery service — careful and precise.\""
+          - separator [ref=e176]
+        - generic [ref=e177]:
+          - heading "Created By Us" [level=3] [ref=e178]
+          - paragraph [ref=e179]: A selection of our most popular colour and finish pairings. Click to load configuration.
+        - generic [ref=e180]:
+          - link [ref=e181] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Golden Ambra top, Pietra Grey base and Brushed Gold metal edge" [ref=e182]
+            - list [ref=e183]:
+              - listitem [ref=e184]: Golden Ambra
+              - listitem [ref=e185]: "Base: Pietra Grey"
+              - listitem [ref=e186]: "Edge Veneer: Brushed Gold"
+          - link [ref=e187] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Ivory Gioiello top, Ivory Gioiello base and Brushed Bronze metal edge" [ref=e188]
+            - list [ref=e189]:
+              - listitem [ref=e190]: Ivory Gioiello
+              - listitem [ref=e191]: "Base: Ivory Gioiello"
+              - listitem [ref=e192]: "Edge Veneer: Brushed Bronze"
+          - link [ref=e193] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Calacatta Macchia Vecchia top, Mogano base and Brushed Bronze metal edge" [ref=e194]
+            - list [ref=e195]:
+              - listitem [ref=e196]: Calacatta Macchia Vecchia
+              - listitem [ref=e197]: "Base: Mogano"
+              - listitem [ref=e198]: "Edge Veneer: Brushed Bronze"
+          - link [ref=e199] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Dark Marquina top, Michelangelo Bianco base and Brushed Steel metal edge" [ref=e200]
+            - list [ref=e201]:
+              - listitem [ref=e202]: Dark Marquina
+              - listitem [ref=e203]: "Base: Michelangelo Bianco"
+              - listitem [ref=e204]: "Edge Veneer: Brushed Steel"
+          - link [ref=e205] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Arabescato top, Arabescato base and Brushed Bronze metal edge" [ref=e206]
+            - list [ref=e207]:
+              - listitem [ref=e208]: Arabescato
+              - listitem [ref=e209]: "Base: Arabescato"
+              - listitem [ref=e210]: "Edge Veneer: Brushed Bronze"
+          - link [ref=e211] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Laguna Blanca top, Laguna Blanca base and Satin Black metal edge" [ref=e212]
+            - list [ref=e213]:
+              - listitem [ref=e214]: Laguna Blanca
+              - listitem [ref=e215]: "Base: Laguna Blanca"
+              - listitem [ref=e216]: "Edge Veneer: Satin Black"
+          - link [ref=e217] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Calacatta Luxury top, Mulberry base and Brushed Gold metal edge" [ref=e218]
+            - list [ref=e219]:
+              - listitem [ref=e220]: Calacatta Luxury
+              - listitem [ref=e221]: "Base: Mulberry"
+              - listitem [ref=e222]: "Edge Veneer: Brushed Gold"
+          - link [ref=e223] [cursor=pointer]:
+            - /url: "#3d-model"
+            - img "Created by us configuration image showing Fior Di Bosco top, Moro base and Brushed Bronze metal edge" [ref=e224]
+            - list [ref=e225]:
+              - listitem [ref=e226]: Fior Di Bosco
+              - listitem [ref=e227]: "Base: Moro"
+              - listitem [ref=e228]: "Edge Veneer: Brushed Bronze"
+        - generic [ref=e229]:
+          - generic [ref=e230]:
+            - heading "Create Your Own" [level=3] [ref=e231]
+            - paragraph [ref=e232]: Personalise every detail and preview your table instantly.
+          - generic [ref=e237]:
+            - list [ref=e239]:
+              - listitem [ref=e240]:
+                - generic [ref=e241] [cursor=pointer]:
+                  - generic [ref=e243]: Size
+                  - text: Select size
+              - listitem [ref=e244]:
+                - generic [ref=e245] [cursor=pointer]:
+                  - generic [ref=e247]: Surface
+                  - text: Select surface
+              - listitem [ref=e248]:
+                - generic [ref=e249] [cursor=pointer]:
+                  - generic [ref=e251]: Base Finish
+                  - text: Select base
+              - listitem [ref=e252]:
+                - generic [ref=e253] [cursor=pointer]:
+                  - generic [ref=e255]: Metal Edge
+                  - text: Select edge
+            - generic [ref=e256]:
+              - generic "Close" [ref=e257]
+              - generic [ref=e261]:
+                - text: Choose
+                - generic: Close and move on to choose base colour Choose Personalise your dining table. Click on a swatch below to choose your preferred table top colour. The 3D visualiser will update to show your choice.
+                - generic: Close and move on to choose edge colour Choose Personalise your dining table. Click on a swatch below to choose your preferred base colour. The 3D visualiser will update to show your choice.
+                - generic: Close and complete your configuration Choose Personalise your dining table. Click on a metal swatch below to choose your preferred edge style. The 3D visualiser will update to show your choice.
+                - generic: "Close and move on to choose top colour Choose Personalise your dining table. Select the size that best fits your space and seating requirements. Dimensions: Dimensions: Dimensions: Dimensions: Please note that 3D Model within the configurator is a fixed size."
+          - generic [ref=e263]:
+            - heading "Your Creation" [level=3] [ref=e264]
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]:
+                  - paragraph [ref=e268]: Phantom Edge – Quad
+                  - paragraph [ref=e269]: £7800.00
+                  - paragraph [ref=e270]: Surface
+                  - generic [ref=e271]: arabescato
+                  - paragraph [ref=e272]: Base Finish
+                  - generic [ref=e273]: Arabescato
+                  - generic [ref=e274]:
+                    - paragraph [ref=e275]: Metal Edge
+                    - text: Brushed Bronze
+                  - generic [ref=e276]:
+                    - paragraph [ref=e277]: "Size:"
+                    - text: 300cm - Seats 10 - 12
+                - generic [ref=e279]:
+                  - generic [ref=e280]:
+                    - link [ref=e282] [cursor=pointer]:
+                      - /url: https://store.tailormade.uk/wp-content/uploads/swatch-arabescato-700x1200.jpg
+                      - img "Top Colour image swatch" [ref=e283]
+                    - paragraph [ref=e284]: Top Colour
+                    - paragraph [ref=e285]: arabescato - Natural Finish
+                  - generic [ref=e286]:
+                    - link [ref=e288] [cursor=pointer]:
+                      - /url: https://store.tailormade.uk/wp-content/uploads/swatch-arabescato-700x1200.jpg
+                      - img "Base Colour image swatch" [ref=e289]
+                    - paragraph [ref=e290]: Base Colour
+                    - paragraph [ref=e291]: Arabescato
+                  - generic [ref=e292]:
+                    - link [ref=e294] [cursor=pointer]:
+                      - /url: https://store.tailormade.uk/wp-content/uploads/banding-brushed-bronze-280x113.jpg
+                      - img "Metal Edge Colour image swatch" [ref=e295]
+                    - paragraph [ref=e296]: Metal Edge
+                    - paragraph [ref=e297]: Brushed Bronze
+                - link "Order Swatches" [ref=e300] [cursor=pointer]:
+                  - /url: "#"
+              - generic [ref=e301]:
+                - generic [ref=e302]:
+                  - paragraph [ref=e303]: Product Specification
+                  - paragraph [ref=e304]: 300cm L x 130cm W x 77cm H
+                - generic [ref=e305]:
+                  - link "View Full Technical Specification" [ref=e306] [cursor=pointer]:
+                    - /url: "#"
+                  - list:
+                    - listitem [ref=e307]: "300cm Table:300cm L x 130cm W x 77cm H118″ L × 51″ W × 30.3″ HWeight: 350kgTop Thickness: 50mmTop Edge Profile: Metal VeneerClearance Under Tabletop: 72cmBase: 65cm DSpace Between Base: 90cmSeats: 10 - 12"
+                - link [ref=e309] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/wp-content/themes/tm-shop-child/assets/layers/composites/d201c8a082a36c779d5e3c3f852ce621-1600.png
+                  - img "Configured Product image preview" [ref=e310]
+                - generic [ref=e311]:
+                  - button "Save Your Design" [ref=e313] [cursor=pointer]
+                  - link "Saved Designs" [ref=e314] [cursor=pointer]:
+                    - /url: /wishlist
+                  - button "Share via WhatsApp" [ref=e315] [cursor=pointer]: Share Via WhatsApp
+                  - button "Download PDF" [ref=e317] [cursor=pointer]
+            - paragraph [ref=e319]: You can order porcelain stoneware colour swatches and real wood samples for all our models. Porcelain swatches are £15 each, wood swatch samples are £10 each. The cost for these samples will be reimbursed against your table order. Click the Order Swatches button above to add your selected colours to your cart.
+          - generic [ref=e320]:
+            - generic [ref=e321]:
+              - paragraph [ref=e323]: £7800.00
+              - paragraph [ref=e324]: Handcrafted to your specification in 4-6 weeks
+            - generic [ref=e325]:
+              - button "Add to basket" [ref=e328] [cursor=pointer]
+              - generic [ref=e329]:
+                - link "Talk To A Table Specialist" [ref=e330] [cursor=pointer]:
+                  - /url: "#"
+                - generic [ref=e331]:
+                  - paragraph [ref=e332]: Not sure what finish will work best?
+                  - img "Whatsapp logo" [ref=e333]
+            - list [ref=e335]:
+              - listitem [ref=e336]: Made to order in the UK
+              - listitem [ref=e338]: Samples available
+              - listitem [ref=e340]: Design guidance included
+        - list [ref=e342]:
+          - listitem [ref=e343]:
+            - link [ref=e344] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-05.jpg
+              - img "Phantom Edge – Quad gallery image 1" [ref=e345]
+          - listitem [ref=e346]:
+            - link [ref=e347] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-bp101-macchia-vecchia-profile-02.png
+              - img "Phantom Edge – Quad gallery image 2" [ref=e348]
+          - listitem [ref=e349]:
+            - link [ref=e350] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-bp101-macchia-vecchia-profile-01.png
+              - img "Phantom Edge – Quad gallery image 3" [ref=e351]
+          - listitem [ref=e352]:
+            - link [ref=e353] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/piazza-alveo-metal-inox-michelangelo-bianco-300x120-03.jpg
+              - img "Phantom Edge – Quad gallery image 4" [ref=e354]
+          - listitem [ref=e355]:
+            - link [ref=e356] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/seating-illustration-scaled.png
+              - img "Phantom Edge – Quad gallery image 5" [ref=e357]
+          - listitem [ref=e358]:
+            - link [ref=e359] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-bp101-macchia-vecchia-side.png
+              - img "Phantom Edge – Quad gallery image 6" [ref=e360]
+          - listitem [ref=e361]:
+            - link [ref=e362] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-top-view-michelangelo.png
+              - img "Phantom Edge – Quad gallery image 7" [ref=e363]
+          - listitem [ref=e364]:
+            - link [ref=e365] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-top-view-amber.png
+              - img "Phantom Edge – Quad gallery image 8" [ref=e366]
+          - listitem [ref=e367]:
+            - link [ref=e368] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-top-view-gioiello.png
+              - img "Phantom Edge – Quad gallery image 9" [ref=e369]
+          - listitem [ref=e370]:
+            - link [ref=e371] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-top-view-laguna.png
+              - img "Phantom Edge – Quad gallery image 10" [ref=e372]
+          - listitem [ref=e373]:
+            - link [ref=e374] [cursor=pointer]:
+              - /url: https://store.tailormade.uk/wp-content/uploads/tt04-1100x2500-top-view-macchiavecchia.png
+              - img "Phantom Edge – Quad gallery image 11" [ref=e375]
+        - generic [ref=e376]:
+          - separator [ref=e377]
+          - blockquote [ref=e378]:
+            - paragraph [ref=e379]: "\"Thrilled with the table — it looks stunning.\""
+          - separator [ref=e380]
+        - generic [ref=e381]:
+          - heading "Explore The Collection" [level=3] [ref=e382]
+          - paragraph [ref=e383]: Discover curated interiors, finishes, and configurations from the Tailor-made dining table collection.
+          - link "Download Collection Brochure" [ref=e384] [cursor=pointer]:
+            - /url: https://tailormade.uk/wp-content/uploads/pdf/brochure/Tailor-made-Luxury-Dining-Tables.pdf
+          - link [ref=e385] [cursor=pointer]:
+            - /url: https://tailormade.uk/wp-content/uploads/pdf/brochure/Tailor-made-Luxury-Dining-Tables.pdf
+            - img "Download Our Brochure" [ref=e387]
+          - separator [ref=e388]
+          - generic [ref=e389]:
+            - generic [ref=e390]:
+              - heading "Why Porcelain Stoneware" [level=3] [ref=e391]
+              - paragraph [ref=e392]: Porcelain stoneware combines the visual richness of natural materials with exceptional everyday durability. Resistant to stains, scratches, and heat, it is designed for modern living without the maintenance associated with marble or wood.
+              - list [ref=e394]:
+                - listitem [ref=e395]: Resistant to stains, scratches, and heat
+                - listitem [ref=e397]: No sealing or maintenance
+                - listitem [ref=e399]: Designed for everyday living
+            - img "Porcelain Stoneware Table" [ref=e402]
+          - separator [ref=e403]
+          - generic [ref=e404]:
+            - heading "Handcrafted & Delivered with Care" [level=3] [ref=e405]
+            - paragraph [ref=e406]: Every table is made to order in the UK and carefully prepared for delivery by our specialist team. From production through to installation, each piece is handled with precision and attention to detail.
+            - list [ref=e407]:
+              - listitem [ref=e408]: Made to order in the UK
+              - listitem [ref=e409]: Specialist delivery team
+              - listitem [ref=e410]: Carefully positioned and installed
+              - listitem [ref=e411]: White glove delivery experience
+          - separator [ref=e412]
+          - generic [ref=e413]:
+            - heading "Frequently Asked Questions" [level=3] [ref=e414]
+            - generic [ref=e415]:
+              - paragraph [ref=e416]: Can I customise size and shape?
+              - paragraph [ref=e418]: Absolutely. Our website offers four sizes and four shapes as standard but we can create tables in custom dimensions to fit your space perfectly. Contact our personal shopping advisors to discuss bespoke sizes and shapes.
+            - generic [ref=e419]:
+              - paragraph [ref=e420]: How do I choose a colour?
+              - paragraph [ref=e422]: Use the configurator or request samples.
+            - generic [ref=e423]:
+              - paragraph [ref=e424]: Can I see the tables in person?
+              - paragraph [ref=e426]: Yes, Please WhatsApp your personal table specialist for information and assistance.
+            - generic [ref=e427]:
+              - paragraph [ref=e428]: Where are they made?
+              - paragraph [ref=e430]: British Craftsmanship - All tables are made in the UK.
+            - generic [ref=e431]:
+              - paragraph [ref=e432]: Do I need to know exactly what I want?
+              - paragraph [ref=e434]: No - we'll guide you.
+        - generic [ref=e435]:
+          - heading "Find the Right Table for your Space" [level=3] [ref=e436]
+          - paragraph [ref=e437]: Whether you already have a configuration in mind or need guidance choosing finishes and sizes, our team will be delighted to help.
+          - generic [ref=e438]:
+            - link "Continue To Purchase" [ref=e440] [cursor=pointer]:
+              - /url: "#product-add-to-cart-section"
+            - generic [ref=e441]:
+              - link "Talk To A Table Specialist" [ref=e442] [cursor=pointer]:
+                - /url: "#"
+              - generic [ref=e443]:
+                - paragraph [ref=e444]: One-to-one guidance from our design team
+                - img "Whatsapp logo" [ref=e445]
+          - list [ref=e449]:
+            - listitem [ref=e450]:
+              - link "WhatsApp us" [ref=e451] [cursor=pointer]:
+                - /url: https://wa.me/447782274315?text=Hi,%20I%20have%20a%20question%20about%20your%20dining%20table%20-%20https://store.tailormade.uk/product/phantom-edge-quad/
+            - listitem [ref=e453]:
+              - link "Call us on 020 3848 5212" [ref=e454] [cursor=pointer]:
+                - /url: tel:020 3848 5212
+            - listitem [ref=e456]: Or share your details below and we'll be in touch.
+    - contentinfo [ref=e457]:
+      - generic [ref=e458]:
+        - generic [ref=e459]:
+          - generic [ref=e460]:
+            - heading "Customer Service" [level=2] [ref=e462]
+            - generic [ref=e463]:
+              - paragraph [ref=e464]: Wherever you are, our Tailor-made+ advisors will be delighted to assist you with product recommendations and personal guidance.
+              - paragraph [ref=e465]:
+                - link "WhatsApp" [ref=e466] [cursor=pointer]:
+                  - /url: https://wa.me/447782274315?text=Hi,%20I%20have%20a%20question%20about%20your%20dining%20tables
+                - link "020 3848 5212" [ref=e468] [cursor=pointer]:
+                  - /url: tel:020 3848 5212
+                - link "sales@tailormade.uk" [ref=e470] [cursor=pointer]:
+                  - /url: mailto:sales@tailormade.uk
+              - paragraph [ref=e472]: Monday – Friday 9am to 5pm
+              - paragraph [ref=e473]:
+                - strong [ref=e474]: Factory Address
+                - generic [ref=e475]: 65 Bridge Street,Chatteris PE16 6RDCambridgeshire
+            - paragraph [ref=e477]:
+              - text: We create
+              - link "luxury dining tables" [ref=e478] [cursor=pointer]:
+                - /url: /product-category/furniture/tables/dining-tables/
+              - text: using premium porcelain stoneware. Handmade to order. British craftsmanship.
+          - generic [ref=e480]:
+            - generic [ref=e481]: Information
+            - list [ref=e483]:
+              - listitem [ref=e484]:
+                - link "About Us" [ref=e485] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/about-us/
+              - listitem [ref=e486]:
+                - link "Contact us" [ref=e487] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/contact-us/
+              - listitem [ref=e488]:
+                - link "FAQs" [ref=e489] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/frequently-asked-questions/
+              - listitem [ref=e490]:
+                - link "Support" [ref=e491] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/frequently-asked-questions/
+              - listitem [ref=e492]:
+                - link "Aftercare" [ref=e493] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/product-care/
+              - listitem [ref=e494]:
+                - link "Manufactured in UK" [ref=e495] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/about-us/manufactured-in-great-britain/
+          - generic [ref=e497]:
+            - generic [ref=e498]: Orders
+            - list [ref=e500]:
+              - listitem [ref=e501]:
+                - link "Delivery Information" [ref=e502] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/delivery/
+              - listitem [ref=e503]:
+                - link "Returns Policy" [ref=e504] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/returns-policy/
+              - listitem [ref=e505]:
+                - link "Payment Options" [ref=e506] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/payment/
+              - listitem [ref=e507]:
+                - link "Warranty" [ref=e508] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/support/warranty/
+              - listitem [ref=e509]:
+                - link "Trade Programme" [ref=e510] [cursor=pointer]:
+                  - /url: https://store.tailormade.uk/about-us/trade-programme/
+        - generic [ref=e511]:
+          - paragraph [ref=e512]:
+            - strong [ref=e513]: Join 30,000+ Followers
+          - paragraph [ref=e514]: See our latest dining tables, design inspiration, and behind-the-scenes stories on Instagram.
+          - paragraph [ref=e515]:
+            - link "@tailormadeuk" [ref=e516] [cursor=pointer]:
+              - /url: https://instagram.com/tailormadeuk/
+  - list [ref=e521]:
+    - listitem [ref=e522]:
+      - link "Using This Website" [ref=e523] [cursor=pointer]:
+        - /url: https://store.tailormade.uk/legal/
+    - listitem [ref=e524]:
+      - link "Terms & Conditions" [ref=e525] [cursor=pointer]:
+        - /url: https://store.tailormade.uk/legal/terms/
+    - listitem [ref=e526]:
+      - link "Privacy Notice" [ref=e527] [cursor=pointer]:
+        - /url: https://store.tailormade.uk/legal/privacy-policy/
+    - listitem [ref=e528]:
+      - link "Cookie Policy" [ref=e529] [cursor=pointer]:
+        - /url: https://store.tailormade.uk/legal/cookie-policy/
+  - generic [ref=e531]:
+    - paragraph [ref=e533]:
+      - text: Tailor-made
+      - superscript [ref=e534]: +
+      - text: Platinum Partner of
+    - img "The Society of British and International Interior Design (SBID) - Platinum Partner" [ref=e536]
+    - img "The British Institute of Interior Design (BIID) - Industry Partner" [ref=e538]
+  - generic [ref=e540]:
+    - generic [ref=e541]:
+      - paragraph [ref=e542]: A more tailored experience
+      - paragraph [ref=e543]:
+        - text: We use cookies to refine your experience, remember your preferences, and understand how our collections are explored. This allows us to present more relevant pieces and continuously elevate the quality of your journey with us. You can accept all cookies, adjust your preferences, or continue with essential cookies only. For full details, please view our
+        - link "Cookie Policy" [ref=e544] [cursor=pointer]:
+          - /url: /legal/cookie-policy/
+        - text: .
+    - generic [ref=e546]:
+      - button "Manage preferences" [ref=e547] [cursor=pointer]
+      - button "Agree to all" [ref=e548] [cursor=pointer]
+```
+
+# Test source
+
+```ts
+  1  | const { test, expect } = require('@playwright/test');
+  2  | 
+  3  | // Test metadata to pass to WP scheduler via the monitoring API
+  4  | test.monitoring = {
+  5  |     slug: 'tm-checkout-flow',
+  6  |     name: 'TM Checkout Flow',
+  7  |     description: 'Checks the customer checkout process',
+  8  |     type: 'playwright'
+  9  | };
+  10 | 
+  11 | test('tm-checkout-flow', async ({ page }) => {
+  12 | 
+  13 |     await page.goto('https://store.tailormade.uk/product/phantom-edge-quad/?base=Arabescato&veneer=Brushed%20Bronze&colour=Arabescato');
+> 14 | expect(true).toBe(false);
+     |              ^ Error: expect(received).toBe(expected) // Object.is equality
+  15 |     // Accept cookies if the button is present
+  16 |     const acceptCookiesButton = page.locator('#btn-accept-all');
+  17 |     if (await acceptCookiesButton.isVisible()) {
+  18 |         await acceptCookiesButton.click();
+  19 |     }
+  20 | 
+  21 |     await page.click('.single_add_to_cart_button');
+  22 | 
+  23 |     const countLocator = page.locator('.header-items-count');
+  24 |     await expect(countLocator).toBeVisible();
+  25 |     await expect(countLocator).toHaveText('1');
+  26 | 
+  27 |     await page.goto('https://store.tailormade.uk/checkout');
+  28 | 
+  29 |     // Check that the form with name 'checkout' is visible
+  30 |     await expect(page.locator('form[name="checkout"]')).toBeVisible();
+  31 | 
+  32 | });
+```

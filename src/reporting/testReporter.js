@@ -23,6 +23,9 @@ const {
     resolveFailure
 } = require('../db/queries/failures');
 
+// Pull in the failure notification service to send email alerts
+const FailureNotification = require('../services/notifications/FailureNotification');
+
 // Pull in path module to handle file paths
 const path = require('path');
 
@@ -31,6 +34,7 @@ class TestReporter {
   constructor() {
     this.results = [];
     this.executionId = null;
+    this.notification = new FailureNotification();
   }
 
   onBegin() {
@@ -50,7 +54,7 @@ class TestReporter {
    * @param {Object} test Playwright test details
    * @param {Object} result Playwright execution result
    */
-  onTestEnd(test, result) {
+  async onTestEnd(test, result) {
 
     const testRecord = findBySlug(
         process.env.MONITORING_TEST_SLUG
@@ -92,19 +96,37 @@ class TestReporter {
 
       if (existingFailure) {
 
-          updateFailure(existingFailure.id);
+        updateFailure(existingFailure.id);
 
       } else {
 
-          // Create a new failure record
-          createFailure({
-              testResultId: resultId,
-              errorMessage: output.error,
-              stackTrace: stripAnsi(result.error?.stack)
+        // Create a new failure record
+        createFailure({
+            testResultId: resultId,
+            errorMessage: output.error,
+            stackTrace: stripAnsi(result.error?.stack)
+        });
+
+        // Send a notification for the new failure
+        try{
+
+          await this.notification.send({
+
+              test: testRecord,
+
+              error: output.error
+
           });
 
-      }
+        } catch (error) {
 
+          // Log the error if sending the notification fails
+          console.error(
+              'Failed to send failure notification:',
+              error
+          );
+        }
+      }
     }
 
     // Handle passing tests
