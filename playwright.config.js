@@ -20,7 +20,7 @@ module.exports = defineConfig({
 
   // Define the test reporter configuration
   reporter: [
-    ['./src/reporting/testReporter.js']
+    ['./src/reporting/TestReporter.js']
   ],
 
 });
