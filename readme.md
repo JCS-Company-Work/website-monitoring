@@ -9,19 +9,29 @@ Configuration can be received from external systems through an authenticated API
 The project currently supports:
 
 * Running Playwright monitoring tests
-* Registering monitored tests in a SQLite database
+* Registering monitored sites and tests in SQLite
 * Recording individual test executions
+* Recording test results and execution history
 * Tracking failures as incidents
 * Grouping repeated failures into a single incident
 * Resolving failures when tests recover
+* Capturing failure screenshots and videos
+* Sending email notifications for new failure incidents
 * Receiving monitoring configuration through an authenticated API
 * Syncing sites, categories, and tests from external configuration
+* Running scheduled monitoring checks through a background worker
 
 ---
 
-## Architecture Overview
+# Architecture Overview
 
 
+Scheduled Worker
+|
+↓
+Playwright Runner
+|
+↓
 Playwright Tests
 |
 ↓
@@ -37,6 +47,7 @@ SQLite Database
 ├── Test Results
 |
 └── Failure Incidents
+
 
 External Configuration
 |
@@ -54,31 +65,30 @@ SQLite Database
 
 # Database Structure
 
-## brands
+The application uses SQLite for persistence.
 
-Stores monitored brands.
+Database files and setup scripts are stored separately from application code:
 
-Example:
+database/
+├── monitoring.sqlite
+├── migrate.js
+└── seed.js
 
 
-Tailor Made
+Runtime database access is handled through:
 
+src/db/
+├── database.js
+└── queries/
 
-Fields:
-
-* `id`
-* `name`
-* `slug`
-* `created_at`
 
 ---
 
 ## sites
 
-Stores websites belonging to brands.
+Stores monitored websites.
 
 Example:
-
 
 TM Store
 https://store.tailormade.uk
@@ -125,7 +135,6 @@ Stores registered monitoring tests.
 
 Example:
 
-
 tm-checkout-flow
 
 
@@ -140,12 +149,12 @@ Fields:
 * `type`
 * `enabled`
 * `schedule`
+* `next_run_at`
 * `created_at`
 
 The `file` field maps a database test to its Playwright spec file.
 
 Example:
-
 
 tests/tm-store/uptime.spec.js
 
@@ -181,7 +190,6 @@ Each execution creates a result.
 
 Example:
 
-
 Execution 1
 |
 └── tm-checkout-flow
@@ -201,12 +209,12 @@ Fields:
 * `started_at`
 * `completed_at`
 
-This table is used for historical reporting such as:
+This table provides historical reporting data such as:
 
 * uptime percentage
 * success rate
 * response times
-* trends
+* failure trends
 
 ---
 
@@ -216,10 +224,9 @@ Stores failure incidents.
 
 Unlike `test_results`, this does not store every failure attempt.
 
-Repeated failures are grouped together.
+Repeated failures are grouped into a single incident.
 
 Example:
-
 
 Checkout flow failing
 
@@ -248,49 +255,11 @@ Fields:
 
 ---
 
-# Configuration API
-
-The monitoring service exposes an authenticated API endpoint for receiving monitoring configuration.
-
-Endpoint:
-
-
-POST /api/config
-
-
-Requests are authenticated using an API key.
-
-The configuration sync process currently supports:
-
-* Sites
-* Categories
-* Tests
-
-The intended flow is:
-
-
-WordPress
-|
-↓
-Monitoring API
-|
-↓
-Configuration Sync
-|
-↓
-SQLite Database
-
-
-WordPress will become the source of truth for monitoring configuration, including test definitions and schedules.
-
----
-
 # Failure Lifecycle
 
 ## New Failure
 
-A failed test with no existing open incident creates a failure:
-
+A failed test with no existing open incident creates a failure incident:
 
 test_results
 |
@@ -298,8 +267,9 @@ test_results
 failures
 
 
-Example:
+A notification is then sent.
 
+Example:
 
 failures
 
@@ -312,14 +282,14 @@ resolved_at: NULL
 
 ## Repeated Failure
 
-If the same test fails again:
+If the same test continues failing:
 
 * A new `test_results` row is created
-* Existing failure occurrence count increases
-* No new failure row is created
+* The existing failure occurrence count is increased
+* No duplicate failure incident is created
+* No additional notification is sent
 
 Example:
-
 
 test_results
 
@@ -332,7 +302,6 @@ failures
 id | occurrences
 
 1 | 3
-
 
 ---
 
@@ -348,9 +317,43 @@ The incident is closed.
 
 ---
 
+# Failure Notifications
+
+Failure notifications are handled through the notification service:
+
+src/services/notifications/
+├── EmailService.js
+└── FailureNotification.js
+
+
+The notification flow is:
+
+
+Failed Test
+|
+↓
+Reporter
+|
+↓
+Create Failure Incident
+|
+↓
+Queue Notification
+|
+↓
+Reporter onEnd()
+|
+↓
+Send Email
+
+
+Notifications are handled during the reporter completion phase to ensure Playwright waits for asynchronous email delivery.
+
+---
+
 # Reporter Flow
 
-The custom Playwright reporter:
+The custom Playwright reporter is responsible for converting Playwright results into monitoring records.
 
 ## onBegin()
 
@@ -362,25 +365,27 @@ onTestEnd()
 
 For every completed test:
 
-Find matching database test:
-findByName(test.title, relativeFile)
-Save result:
+Find matching database test
+Capture failure evidence if required
+Save test result:
 saveResult()
-Handle failures:
-create new failure
-update existing failure
-resolve recovered failures
+Handle failure lifecycle:
+Create new failure incident
+Update existing failures
+Resolve recovered failures
 onEnd()
 
 Completes the execution:
 
 completeExecution()
 
-# Worker Execution
+Also sends any queued failure notifications.
+
+Worker Execution
 
 The monitoring worker checks for tests that are due to run based on their schedule.
 
-The current flow is:
+The flow is:
 
 Worker
 |
@@ -396,72 +401,89 @@ Custom Reporter
 ↓
 Store execution results
 
+Scheduled tests are identified using:
 
-The worker uses the existing Playwright runner and reporting flow.
+enabled
+schedule
+next_run_at
+Test Execution Flow
 
-Scheduled tests are identified using their database configuration:
+A scheduled execution follows this process:
 
-* `enabled`
-* `schedule`
-* `next_run_at`
-
-
----
-
-# Test Execution Flow
-
-A scheduled test execution follows this process:
-
-1. Worker checks for due tests:
-
+Worker checks for due tests:
 next_run_at <= current time
-
-Worker starts the existing Playwright runner.
+Worker starts the Playwright runner.
 Playwright executes the test file defined in the database.
 
 Example:
 
 tests/tm-store/uptime.spec.js
-The reporter records:
+Reporter records:
 Execution
 Result
 Failure incident (if required)
-
+Notification
 Project Structure
 
 Current structure:
 
-src
-├── api
-│   ├── middleware
-│   │   └── auth.js
-│   └── routes
-│       └── config.js
-│
-├── services
-│   └── configSync.js
-│
-├── db
-│   ├── database.js
-│   ├── migrate.js
-│   ├── seed.js
-│   └── queries
-│       ├── executions.js
-│       ├── failures.js
-│       ├── results.js
-│       ├── sites.js
-│       ├── categories.js
-│       └── tests.js
-│
-├── reporting
-│   └── testReporter.js
-│
-└── utils
-    └── formatters.js
+website-monitoring/
 
-tests
-└── tm-store
-    └── uptime.spec.js
+├── database/
+│   ├── monitoring.sqlite
+│   ├── migrate.js
+│   └── seed.js
+│
+├── src/
+│   ├── run.js
+│   ├── server.js
+│   │
+│   ├── api/
+│   │   ├── middleware/
+│   │   │   └── auth.js
+│   │   └── routes/
+│   │       ├── config.js
+│   │       └── tests.js
+│   │
+│   ├── db/
+│   │   ├── database.js
+│   │   └── queries/
+│   │       ├── executions.js
+│   │       ├── failures.js
+│   │       ├── results.js
+│   │       ├── sites.js
+│   │       ├── categories.js
+│   │       └── tests.js
+│   │
+│   ├── reporting/
+│   │   └── TestReporter.js
+│   │
+│   ├── runner/
+│   │   └── testRunner.js
+│   │
+│   ├── services/
+│   │   ├── availableTests.js
+│   │   ├── configSync.js
+│   │   └── notifications/
+│   │       ├── EmailService.js
+│   │       └── FailureNotification.js
+│   │
+│   ├── utils/
+│   │   ├── failureFiles.js
+│   │   ├── formatters.js
+│   │   └── schedule.js
+│   │
+│   └── worker/
+│       ├── index.js
+│       └── worker.js
+│
+└── tests/
+    ├── failures/
+    │   ├── screenshots/
+    │   └── videos/
+    │
+    └── tm-store/
+        └── uptime.spec.js
 Running Locally
 
 Install dependencies:
@@ -479,3 +501,9 @@ npm test
 Start API:
 
 npm run server
+
+Start monitoring worker:
+
+npm run worker
+
+Main changes are documentation only — no behaviour assumptions beyond what you now have working. I also deliberately avoided adding future ideas (dashboards, uptime reports, etc.) as if they already exist.
