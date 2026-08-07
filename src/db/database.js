@@ -6,7 +6,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 
 // Define the path to the SQLite database file
-const dbPath = path.join(__dirname, '../../data/monitoring.sqlite');
+const dbPath = path.join(__dirname, '../../database/monitoring.sqlite');
 
 // Create a new instance of the Database classand connect to db file
 const db = new Database(dbPath);
