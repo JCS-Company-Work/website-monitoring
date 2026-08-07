@@ -33,17 +33,24 @@ function runTests(file = null, slug) {
             }
         );
 
+        // Handle child process exit
         child.on('close', code => {
 
             if (code !== 0) {
 
-                reject(
-                    new Error(`Tests failed with code ${code}`)
+                console.log(
+                    `Monitoring run completed with failures (exit code ${code})`
                 );
+
+                resolve();
 
                 return;
 
             }
+
+            console.log(
+                'Monitoring run completed successfully'
+            );
 
             resolve();
 

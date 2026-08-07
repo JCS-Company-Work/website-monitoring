@@ -14,11 +14,12 @@ module.exports = defineConfig({
   use: {
     headless: true,
     baseURL: process.env.TM_STORE_URL,
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   // Define the test reporter configuration
   reporter: [
-    ['html'],
     ['./src/reporting/testReporter.js']
   ],
 

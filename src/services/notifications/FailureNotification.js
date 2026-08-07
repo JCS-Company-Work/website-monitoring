@@ -21,29 +21,35 @@ class FailureNotification {
      */
     async send(data) {
 
-        await this.email.send({
+        console.log('FailureNotification.send started');
+
+        const result = await this.email.send({
 
             subject:
                 `[Website Monitoring] Test failed: ${data.test.name}`,
 
             message: `
-                    Monitoring test failure
+                Monitoring test failure
 
-                    Test:
-                    ${data.test.name}
+                Test:
+                ${data.test.name}
 
-                    Slug:
-                    ${data.test.slug}
+                Slug:
+                ${data.test.slug}
 
-                    Error:
+                Error:
 
-                    ${data.error}
+                ${data.error}
 
-                    Time:
-                    ${new Date().toISOString()}
-                                `.trim()
+                Time:
+                ${new Date().toISOString()}
+            `.trim()
 
         });
+
+        console.log('FailureNotification.send completed');
+
+        return result;
 
     }
 

@@ -26,132 +26,367 @@ const {
 // Pull in the failure notification service to send email alerts
 const FailureNotification = require('../services/notifications/FailureNotification');
 
-// Pull in path module to handle file paths
+// Pull in filesystem utilities for failure evidence
+const fs = require('fs');
 const path = require('path');
+
+// Pull in filename generator
+const { filename } = require('../utils/failureFiles');
+
 
 class TestReporter {
 
-  constructor() {
-    this.results = [];
-    this.executionId = null;
-    this.notification = new FailureNotification();
-  }
+    constructor() {
 
-  onBegin() {
+        this.results = [];
 
-    this.executionId = createExecution('manual');
+        this.executionId = null;
 
-    console.log(
-        'Execution started:',
-        this.executionId
-    );
+        this.notification = new FailureNotification();
 
-  }
-
-  /**
-   * Handles completed test results.
-   *
-   * @param {Object} test Playwright test details
-   * @param {Object} result Playwright execution result
-   */
-  async onTestEnd(test, result) {
-
-    const testRecord = findBySlug(
-        process.env.MONITORING_TEST_SLUG
-    );
-    
-    // If the test record doesn't exist, log an error and skip saving the result
-    if (!testRecord) {
-
-      console.error(
-          `No database test found for: ${test.title}`
-      );
-
-      return;
+        this.pendingNotifications = [];
 
     }
 
-    const output = {
-      executionId: this.executionId,
-      testId: testRecord.id,
-      status: result.status,
-      duration: result.duration,
-      startedAt: result.startTime,
-      error: stripAnsi(result.error?.message ?? null)
-    };
 
-    this.results.push(output);
+    onBegin() {
 
-    // Get the ID of the newly created test result
-    const resultId = saveResult(output);
+        this.executionId = createExecution('manual');
 
-    // Check for an existing unresolved failure for this test
-    const existingFailure = findOpenFailure(testRecord.id);
+        console.log(
+            'Execution started:',
+            this.executionId
+        );
 
-    // If the test failed, create a failure record
-    if (result.status === 'failed') {
-
-      // If failure instance exists, update it, do not create a new one
-      const existingFailure = findOpenFailure(testRecord.id);
-
-      if (existingFailure) {
-
-        updateFailure(existingFailure.id);
-
-      } else {
-
-        // Create a new failure record
-        createFailure({
-            testResultId: resultId,
-            errorMessage: output.error,
-            stackTrace: stripAnsi(result.error?.stack)
-        });
-
-        // Send a notification for the new failure
-        try{
-
-          await this.notification.send({
-
-              test: testRecord,
-
-              error: output.error
-
-          });
-
-        } catch (error) {
-
-          // Log the error if sending the notification fails
-          console.error(
-              'Failed to send failure notification:',
-              error
-          );
-        }
-      }
     }
 
-    // Handle passing tests
-    if (result.status === 'passed') {
 
-        if (existingFailure) {
+    /**
+     * Handles completed test results.
+     *
+     * @param {Object} test Playwright test details
+     * @param {Object} result Playwright execution result
+     */
+    onTestEnd(test, result) {
 
-            resolveFailure(existingFailure.id);
+        // Find the corresponding test record in the database
+        const testRecord = findBySlug(
+            process.env.MONITORING_TEST_SLUG
+        );
+
+
+        // If no database record exists, skip saving result
+        if (!testRecord) {
+
+            console.error(
+                `No database test found for: ${test.title}`
+            );
+
+            return;
 
         }
 
+
+        // Initialize stored files object
+        let storedFiles = {
+            screenshot: null,
+            video: null
+        };
+
+
+        // Capture failure evidence
+        if (result.status === 'failed') {
+
+            storedFiles = this.saveFailureFiles(
+                testRecord,
+                result
+            );
+
+        }
+
+
+        // Prepare output object for saving to the database
+        const output = {
+
+            executionId: this.executionId,
+
+            testId: testRecord.id,
+
+            status: result.status,
+
+            duration: result.duration,
+
+            startedAt: result.startTime,
+
+            error: stripAnsi(
+                result.error?.message ?? null
+            ),
+
+            screenshot: storedFiles.screenshot,
+
+            video: storedFiles.video
+
+        };
+
+
+        this.results.push(output);
+
+
+        // Save test result
+        const resultId = saveResult(output);
+
+
+        // Check for an existing unresolved failure
+        const existingFailure = findOpenFailure(
+            testRecord.id
+        );
+
+
+        // Handle failures
+        if (result.status === 'failed') {
+
+
+            if (existingFailure) {
+
+
+                console.log(
+                    `Existing failure found (#${existingFailure.id}), updating without notification`
+                );
+
+
+                updateFailure(
+                    existingFailure.id
+                );
+
+
+            } else {
+
+
+                console.log(
+                    'New failure detected, creating incident and queuing notification'
+                );
+
+
+                createFailure({
+
+                    testResultId: resultId,
+
+                    errorMessage: output.error,
+
+                    stackTrace: stripAnsi(
+                        result.error?.stack
+                    ),
+
+                    screenshot: output.screenshot,
+
+                    video: output.video
+
+                });
+
+
+                // Queue notification for onEnd()
+                this.pendingNotifications.push({
+
+                    test: testRecord,
+
+                    error: output.error
+
+                });
+
+
+            }
+
+
+        }
+
+
+        // Handle passing tests
+        if (result.status === 'passed') {
+
+
+            if (existingFailure) {
+
+                resolveFailure(
+                    existingFailure.id
+                );
+
+            }
+
+        }
+
     }
 
-  }
 
-  /**
-   * Runs when the full Playwright test suite completes.
-   */
-  onEnd() {
+    /**
+     * Saves screenshots and videos generated by Playwright.
+     *
+     * @param {Object} testRecord Database test record
+     * @param {Object} result Playwright result
+     *
+     * @returns {Object}
+     */
+    saveFailureFiles(testRecord, result) {
 
-    if (this.executionId !== null) {
-        completeExecution(this.executionId);
+
+        const files = {
+
+            screenshot: null,
+
+            video: null
+
+        };
+
+
+        const screenshotDir = path.join(
+            __dirname,
+            '../../tests/failures/screenshots'
+        );
+
+
+        const videoDir = path.join(
+            __dirname,
+            '../../tests/failures/videos'
+        );
+
+
+        fs.mkdirSync(
+            screenshotDir,
+            {
+                recursive: true
+            }
+        );
+
+
+        fs.mkdirSync(
+            videoDir,
+            {
+                recursive: true
+            }
+        );
+
+
+        for (const attachment of result.attachments ?? []) {
+
+
+            if (
+                attachment.name === 'screenshot' &&
+                attachment.path
+            ) {
+
+
+                const destination = path.join(
+
+                    screenshotDir,
+
+                    filename(
+                        testRecord.id,
+                        testRecord.slug,
+                        'png'
+                    )
+
+                );
+
+
+                fs.copyFileSync(
+                    attachment.path,
+                    destination
+                );
+
+
+                files.screenshot = destination;
+
+
+            }
+
+
+            if (
+                attachment.name === 'video' &&
+                attachment.path
+            ) {
+
+
+                const destination = path.join(
+
+                    videoDir,
+
+                    filename(
+                        testRecord.id,
+                        testRecord.slug,
+                        'webm'
+                    )
+
+                );
+
+
+                fs.copyFileSync(
+                    attachment.path,
+                    destination
+                );
+
+
+                files.video = destination;
+
+
+            }
+
+
+        }
+
+
+        return files;
+
+
     }
 
-  }
+
+    /**
+     * Runs when the full Playwright test suite completes.
+     */
+    async onEnd() {
+
+
+        for (const notification of this.pendingNotifications) {
+
+            try {
+
+                console.log(
+                    'Sending failure notification for:',
+                    notification.test.slug
+                );
+
+
+                await this.notification.send(notification);
+
+
+                console.log(
+                    'Failure notification sent'
+                );
+
+
+            } catch (error) {
+
+
+                console.error(
+                    'Failed to send failure notification:',
+                    error
+                );
+
+
+            }
+
+        }
+
+
+        if (this.executionId !== null) {
+
+            completeExecution(
+                this.executionId
+            );
+
+        }
+
+
+    }
 
 }
 

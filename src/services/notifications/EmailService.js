@@ -27,7 +27,16 @@ class EmailService {
 
                 pass: process.env.SMTP_PASSWORD
 
-            }
+            },
+
+            requireTLS: true,
+
+            logger: true,
+            debug: true,
+
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000
 
         });
 
@@ -40,19 +49,43 @@ class EmailService {
      */
     async send(options) {
 
-        return this.transporter.sendMail({
+    console.log('Email send starting');
 
-            from: process.env.SMTP_FROM,
+    const timeout = new Promise((_, reject) => {
 
-            to: process.env.SMTP_TO,
+        setTimeout(() => {
 
-            subject: options.subject,
+            reject(
+                new Error('SMTP timeout after 10 seconds')
+            );
 
-            text: options.message
+        }, 10000);
 
-        });
+    });
 
-    }
+
+    await Promise.race([
+        this.transporter.verify(),
+        timeout
+    ]);
+
+
+    console.log('SMTP verified');
+
+
+    return this.transporter.sendMail({
+
+        from: process.env.SMTP_FROM,
+
+        to: process.env.SMTP_TO,
+
+        subject: options.subject,
+
+        text: options.message
+
+    });
+
+}
 
 }
 
