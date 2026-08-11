@@ -1,5 +1,5 @@
 // Pull in the database instance
-const db = require('./database');
+const db = require('../../src/db/database');
 
 // Enforce foreign key constraints
 db.pragma('foreign_keys = ON');

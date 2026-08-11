@@ -2,7 +2,7 @@
  * Seeds the monitoring database with development data.
  */
 
-const db = require('./database');
+const db = require('../../src/db/database');
 
 const insertBrand = db.prepare(`
     INSERT INTO brands (name, slug)

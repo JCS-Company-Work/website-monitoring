@@ -14,6 +14,9 @@ module.exports = defineConfig({
   use: {
     headless: true,
     baseURL: process.env.TM_STORE_URL,
+    extraHTTPHeaders: {
+      'X-Monitoring-Run': 'true'
+    },
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
