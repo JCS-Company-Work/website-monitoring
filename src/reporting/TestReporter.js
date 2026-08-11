@@ -62,7 +62,7 @@ class TestReporter {
 
 
     /**
-     * Handles completed test results.
+     * Handles completed test results
      *
      * @param {Object} test Playwright test details
      * @param {Object} result Playwright execution result
